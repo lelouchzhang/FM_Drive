@@ -32,14 +32,14 @@ const MobileNavigator = ({ $id: ownerId, accountId, fullName, avatarUrl, email }
   const pathname = usePathname();
   return (
     <header className="mobile-header">
-      {/* <Image
+      <Image
         src="/assets/icons/logo-full-brand.svg"
         alt="logo"
         width={120}
         height={52}
         className="h-auto"
         priority
-      /> */}
+      />
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger>
           <Image src="/assets/icons/menu.svg" alt="Search" width={30} height={30} />
@@ -95,7 +95,7 @@ const MobileNavigator = ({ $id: ownerId, accountId, fullName, avatarUrl, email }
               onClick={async () => await signOutUser()}
             >
               <Image src="/assets/icons/logout.svg" alt="logout logo" width={24} height={24} />
-              <p>退出</p>
+              <p>登出</p>
             </Button>
           </div>
         </SheetContent>

@@ -26,10 +26,10 @@ type FormType = 'sign-in' | 'sign-up';
 
 const myformSchema = (type: FormType) => {
   return z.object({
-    email: z.string().email(),
+    email: z.string().email({ message: '请输入可用邮箱,格式为xxx@xxx.xxx' }),
     fullName:
       type === 'sign-up'
-        ? z.string().min(2, { message: 'Full name must be at least 2 characters.' }).max(50)
+        ? z.string().min(2, { message: '昵称不应小于两个字符.' }).max(50)
         : z.string().optional(),
   });
 };
@@ -73,7 +73,7 @@ export const AuthForm = ({ type }: { type: FormType }) => {
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form">
-          <h1 className="form-title">{type === 'sign-in' ? 'Sign In' : 'Sign Up'}</h1>
+          <h1 className="form-title">{type === 'sign-in' ? '登录' : '注册'}</h1>
           {type === 'sign-up' && (
             <FormField
               control={form.control}
@@ -81,9 +81,9 @@ export const AuthForm = ({ type }: { type: FormType }) => {
               render={({ field }) => (
                 <FormItem>
                   <div className="shad-form-item">
-                    <FormLabel className="shad-form-label">full name</FormLabel>
+                    <FormLabel className="shad-form-label">昵称</FormLabel>
                     <FormControl>
-                      <Input placeholder="input your full name" {...field} className="shad-input" />
+                      <Input placeholder="在此处输入你的昵称" {...field} className="shad-input" />
                     </FormControl>
                   </div>
                   {/* <FormDescription>This is your public display name.</FormDescription> */}
@@ -98,9 +98,13 @@ export const AuthForm = ({ type }: { type: FormType }) => {
             render={({ field }) => (
               <FormItem>
                 <div className="shad-form-item">
-                  <FormLabel className="shad-form-label">Email</FormLabel>
+                  <FormLabel className="shad-form-label">邮箱地址</FormLabel>
                   <FormControl>
-                    <Input placeholder="input your Email" {...field} className="shad-input" />
+                    <Input
+                      placeholder="我们会向您发送一封邮件用于验证..."
+                      {...field}
+                      className="shad-input"
+                    />
                   </FormControl>
                 </div>
                 {/* <FormDescription>This is your public display name.</FormDescription> */}
@@ -129,7 +133,7 @@ export const AuthForm = ({ type }: { type: FormType }) => {
               href={type === 'sign-in' ? '/sign-up' : '/sign-in'}
               className="ml-1 font-medium text-brand"
             >
-              {type === 'sign-in' ? 'Create an account' : 'Sign in'}
+              {type === 'sign-in' ? '点我注册' : '点我登录'}
             </Link>
           </div>
         </form>

@@ -6,19 +6,12 @@ import { appwriteConfig } from '../appwrite/config';
 import { parseStringify, handleError } from '../utils';
 import { avatarPlaceholderUrl, LOGIN_COOKIE_NAME } from '@/constants';
 import { redirect } from 'next/navigation';
+
+// 辅助函数: getUserByEmail => 用户信息|null
 /**
- * 登录流程
- * 1. 用户输入邮箱和密码
- * 2. 检查邮箱是否存在
- * 3. 发送otp
- * 4. 创建session
- * 5. 创建用户信息(如果用户不存在)
- * 6. 返回用户id用于登录
- * 7. 验证otp,登录
+ * 查询users表满足[Query.equal('email', [email])]的结果，返回
+ * @returns 用户信息|null
  */
-
-// 辅助函数: getUserByEmail
-
 async function getUserByEmail(email: string) {
   const { databases } = await createAdminClient();
 
@@ -32,12 +25,17 @@ async function getUserByEmail(email: string) {
   );
   return result.total > 0 ? result.documents[0] : null;
 }
+
 // 辅助函数: sendEmailOtp
-// 当查询失败时,返回undefined,等待创建新用户
+/**
+ * 请求appwrite 发送emailOtp至传入的邮箱
+ * 注意返回的是数据库中用户的accountId
+ */
 export async function sendEmailOtp({ email }: { email: string }): Promise<string | undefined> {
   const { account } = await createAdminClient();
   try {
     const session = await account.createEmailToken(ID.unique(), email);
+
     return session.userId;
   } catch (error) {
     handleError(error, '发送验证码失败,请检查邮箱是否正确,或稍后再试');
@@ -45,17 +43,17 @@ export async function sendEmailOtp({ email }: { email: string }): Promise<string
 }
 
 // 服务器操作: createAccount
-
+/**
+ * 对于已注册用户,accountId来源于email对应的用户的accountId
+ * 对于新用户，accountId在sendEmailOtp时创建
+ */
 export const createAccount = async ({ fullName, email }: { fullName: string; email: string }) => {
-  // 尝试通过email查找用户
   const isUserExisting = await getUserByEmail(email);
 
-  // 发送otp,并返回accountID
   const accountId: string | undefined = await sendEmailOtp({ email });
   if (!accountId) throw new Error('发送验证码失败');
 
   if (!isUserExisting) {
-    // 创建新用户
     const { databases } = await createAdminClient();
     await databases.createDocument(
       appwriteConfig.databaseId,
@@ -100,10 +98,10 @@ export const getCurrentUser = async () => {
       appwriteConfig.usersCollectionId,
       [Query.equal('accountId', result.$id)]
     );
+
     if (user.total <= 0) return null;
     return parseStringify(user.documents[0]);
   } catch (error) {
-    //todo 如果没有session或其他错误，返回null
     console.log(error);
   }
 };

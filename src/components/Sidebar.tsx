@@ -21,8 +21,8 @@ const Sidebar = ({
         <Image
           src="/assets/icons/logo-full-brand.svg"
           alt="logo"
-          width={180}
-          height={40}
+          width={160}
+          height={50}
           className="hidden lg:block"
           priority
         />
@@ -67,8 +67,8 @@ const Sidebar = ({
         <Image
           src={avatarUrl || avatarPlaceholderUrl}
           alt="avatar"
-          width={40}
-          height={40}
+          width={44}
+          height={44}
           className="sidebar-user-avatar"
         />
         <div className="hidden lg:block">

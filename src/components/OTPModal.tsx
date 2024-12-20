@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -14,12 +13,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-} from '@/components/ui/input-otp';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Button } from './ui/button';
 import { handleError } from '@/lib/utils';
 import { verifyOTP, sendEmailOtp } from '@/lib/actions/user.actions';
@@ -41,7 +35,7 @@ const OTPModal = ({ accountId, email }: OTPModalProps) => {
     setIsLoading(true);
 
     try {
-      // OTP 验证
+      // OTP 验证 返回session.$id
       const sessionId = await verifyOTP({ accountId, otp });
       if (sessionId) {
         router.push('/');
@@ -56,6 +50,7 @@ const OTPModal = ({ accountId, email }: OTPModalProps) => {
   const handleResendOTP = async () => {
     await sendEmailOtp({ email });
   };
+
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       {/* <AlertDialogTrigger>Open</AlertDialogTrigger> */}
@@ -93,7 +88,7 @@ const OTPModal = ({ accountId, email }: OTPModalProps) => {
               className="shad-submit-btn h-12"
               type="button"
             >
-              submit
+              确认
               {isLoading && (
                 <Image
                   src="/assets/icons/loader.svg"

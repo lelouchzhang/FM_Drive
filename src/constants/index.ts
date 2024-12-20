@@ -81,8 +81,9 @@ export const sortTypes = [
   },
 ];
 
+// 'https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg';
 export const avatarPlaceholderUrl =
-  'https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg';
+  'https://cloud.appwrite.io/v1/storage/buckets/6750053d001977c26b3f/files/67655b930030546af5ec/view?project=674fba94002a01601d14&project=674fba94002a01601d14&mode=admin';
 
 export const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 

@@ -1,22 +1,27 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+// 组合tailwind样式(自带)
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// 每当通过服务器传递数据时,先stringify为json字符串再parse
+//todo 处理appwrite的返回结果，供客户端展示
 export function parseStringify(value: unknown) {
   return JSON.parse(JSON.stringify(value));
 }
-// 错误处理
+// 通用的错误处理
 export function handleError(error: unknown, errorMsg: string) {
   console.log(error, errorMsg);
   throw error;
 }
 
-// 获取文件类型和扩展名
-export const getFileType = (fileName: string) => {
+//todo 获取文件类型和扩展名
+/**
+ * @param fileName 通过传入的文件名
+ * @returns 文件的类型和扩展名
+ */
+export const getFileType = (fileName: string): { type: string; extension: string } => {
   const extension = fileName.split('.').pop()?.toLowerCase();
 
   if (!extension) return { type: 'other', extension: '' };
@@ -60,64 +65,9 @@ export const getFileType = (fileName: string) => {
   return { type: 'other', extension };
 };
 
+// 展示文件的缩略图（主要是image）
 export const convertFileToUrl = (file: File) => URL.createObjectURL(file);
-
-export const convertFileSize = (sizeInBytes: number, digits?: number) => {
-  if (sizeInBytes < 1024) {
-    return sizeInBytes + ' Bytes'; // Less than 1 KB, show in Bytes
-  } else if (sizeInBytes < 1024 * 1024) {
-    const sizeInKB = sizeInBytes / 1024;
-    return sizeInKB.toFixed(digits || 1) + ' KB'; // Less than 1 MB, show in KB
-  } else if (sizeInBytes < 1024 * 1024 * 1024) {
-    const sizeInMB = sizeInBytes / (1024 * 1024);
-    return sizeInMB.toFixed(digits || 1) + ' MB'; // Less than 1 GB, show in MB
-  } else {
-    const sizeInGB = sizeInBytes / (1024 * 1024 * 1024);
-    return sizeInGB.toFixed(digits || 1) + ' GB'; // 1 GB or more, show in GB
-  }
-};
-
-export const calculatePercentage = (sizeInBytes: number) => {
-  const totalSizeInBytes = 2 * 1024 * 1024 * 1024; // 2GB in bytes
-  const percentage = (sizeInBytes / totalSizeInBytes) * 100;
-  return Number(percentage.toFixed(2));
-};
-
-export const formatDateTime = (isoString: string | null | undefined) => {
-  if (!isoString) return '—';
-
-  const date = new Date(isoString);
-
-  // Get hours and adjust for 12-hour format
-  let hours = date.getHours();
-  const minutes = date.getMinutes();
-  const period = hours >= 12 ? 'pm' : 'am';
-
-  // Convert hours to 12-hour format
-  hours = hours % 12 || 12;
-
-  // Format the time and date parts
-  const time = `${hours}:${minutes.toString().padStart(2, '0')}${period}`;
-  const day = date.getDate();
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-  const month = monthNames[date.getMonth()];
-
-  return `${time}, ${day} ${month}`;
-};
-
+// 展示文件的缩略图（image以外的类型使用分配的icon）
 export const getFileIcon = (extension: string | undefined, type: FileType | string) => {
   switch (extension) {
     // Document
@@ -176,6 +126,62 @@ export const getFileIcon = (extension: string | undefined, type: FileType | stri
       }
   }
 };
+//todo 展示文件的大小(换算后)
+export const convertFileSize = (sizeInBytes: number, digits?: number) => {
+  if (sizeInBytes < 1024) {
+    return sizeInBytes + ' Bytes'; // Less than 1 KB, show in Bytes
+  } else if (sizeInBytes < 1024 * 1024) {
+    const sizeInKB = sizeInBytes / 1024;
+    return sizeInKB.toFixed(digits || 1) + ' KB'; // Less than 1 MB, show in KB
+  } else if (sizeInBytes < 1024 * 1024 * 1024) {
+    const sizeInMB = sizeInBytes / (1024 * 1024);
+    return sizeInMB.toFixed(digits || 1) + ' MB'; // Less than 1 GB, show in MB
+  } else {
+    const sizeInGB = sizeInBytes / (1024 * 1024 * 1024);
+    return sizeInGB.toFixed(digits || 1) + ' GB'; // 1 GB or more, show in GB
+  }
+};
+// 计算文件储存占空间的百分比,totalSizeInBytes定死2Gb,有必要时再转成常量引入(比如付费或是转本地部署之类的?)
+export const calculatePercentage = (sizeInBytes: number) => {
+  const totalSizeInBytes = 2 * 1024 * 1024 * 1024; // 2GB in bytes
+  const percentage = (sizeInBytes / totalSizeInBytes) * 100;
+  return Number(percentage.toFixed(2));
+};
+//todo 日期格式化
+export const formatDateTime = (isoString: string | null | undefined) => {
+  if (!isoString) return '—';
+
+  const date = new Date(isoString);
+
+  // Get hours and adjust for 12-hour format
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const period = hours >= 12 ? 'pm' : 'am';
+
+  // Convert hours to 12-hour format
+  hours = hours % 12 || 12;
+
+  // Format the time and date parts
+  const time = `${hours}:${minutes.toString().padStart(2, '0')}${period}`;
+  const day = date.getDate();
+  const monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+  const month = monthNames[date.getMonth()];
+
+  return `${month} ${day},${time}`;
+};
 
 // DASHBOARD UTILS
 export const getUsageSummary = (totalSpace: any) => {
@@ -214,6 +220,7 @@ export const getUsageSummary = (totalSpace: any) => {
   ];
 };
 
+// type => types 根据navLink的types展示现存文件
 export const getFileTypesParams = (type: string) => {
   switch (type) {
     case 'documents':

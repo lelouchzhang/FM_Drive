@@ -15,8 +15,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           />
 
           <div className="space-y-5 text-white">
-            <h1 className="h1">Manage your files the best way</h1>
-            <p className="body-1">This is a place where you can store all your documents.</p>
+            <h1 className="h1">分苗bot所属/FM网盘</h1>
+            <p className="body-1">null! 没想好填什么,可能填个图片吧?</p>
           </div>
           <Image
             src="/assets/images/files.png"

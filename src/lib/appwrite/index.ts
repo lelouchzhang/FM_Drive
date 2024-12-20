@@ -40,9 +40,8 @@ export const createSessionClient = async () => {
 
 export const createAdminClient = async () => {
   // admin client 用于在数据库中执行管理操作，例如创建数据库、集合、用户等
-  // 只在服务器端使用的方法
+  // 只在服务器端使用的方法,通过secretKey连接appwrite
   // 创建用户，管理数据库或更高级别的操作
-  // 无需设置session,通过secretKey连接appwrite
 
   const client = new Client()
     .setEndpoint(appwriteConfig.endpointUrl)
