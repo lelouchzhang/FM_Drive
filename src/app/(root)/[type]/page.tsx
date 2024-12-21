@@ -1,9 +1,9 @@
 import Card from '@/components/Card';
 import Sort from '@/components/Sort';
 import { getFiles } from '@/lib/actions/file.action';
-import { getFileTypesParams } from '@/lib/utils';
+import { convertFileSize, getFileTypesParams } from '@/lib/utils';
 import { Models } from 'node-appwrite';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const page = async ({ searchParams, params }: SearchParamProps) => {
   // console.log('params:', await params); // type:type
@@ -17,6 +17,15 @@ const page = async ({ searchParams, params }: SearchParamProps) => {
 
   const files = await getFiles({ types, searchText, sort });
 
+  // 1. 计算总文件大小（字节数）
+  const totalSizeInBytes = files.documents.reduce(
+    (sum: any, file: any) => sum + (file.size || 0),
+    0
+  );
+
+  // 2. 转换为可读大小
+  const readableTotalSize = convertFileSize(totalSizeInBytes);
+
   return (
     <div className="page-container">
       <section className="w-full">
@@ -24,7 +33,7 @@ const page = async ({ searchParams, params }: SearchParamProps) => {
 
         <div className="total-size-section">
           <p className="body-1">
-            Total: <span className="h5">0 MB</span>
+            Total: <span className="h5">{readableTotalSize}</span>
           </p>
 
           <div className="sort-container">
@@ -42,7 +51,7 @@ const page = async ({ searchParams, params }: SearchParamProps) => {
           ))}
         </section>
       ) : (
-        <p className="empty-list">No files uploaded</p>
+        <p className="empty-list">这里什么都没有...</p>
       )}
     </div>
   );

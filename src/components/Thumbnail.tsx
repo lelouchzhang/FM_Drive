@@ -20,7 +20,6 @@ const Thumbnail = ({ type, extension, url = '', className, imageClassName }: Pro
         height={100}
         unoptimized={!showImage}
         className={cn('size-8 object-contain', imageClassName, showImage && 'thumbnail-image')}
-        loading="lazy"
       />
     </figure>
   );
